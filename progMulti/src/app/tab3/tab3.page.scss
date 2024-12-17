@@ -1,0 +1,29 @@
+.favoris-grid {
+    margin: 16px;
+  }
+  
+  .favoris-card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .favoris-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .favoris-image {
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+  }
+  
+  ion-card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+ 
+  

@@ -23,7 +23,7 @@ export class RecettePage implements OnInit {
     }
     this.getRecetteById(id);
     this.getIngredientsByRecetteId(id);
-    
+
   }
 
   async getRecetteById(id:string) {
@@ -52,8 +52,14 @@ export class RecettePage implements OnInit {
     }
   }
 
-  toggleFavoris() {
-    this.recette.favoris = !this.recette.favoris;
+  async toggleFavoris() {
+    try {
+      this.recette.favoris = !this.recette.favoris;
+      await this.supabase.setFavoris(this.recette.id, this.recette.favoris);
+      await this.supabase.createNotice('Recette mise en favoris');
+    } catch (error: any) {
+      alert(error.message);
+    }
   }
 
   editRecette(){
