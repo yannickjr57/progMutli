@@ -7,7 +7,11 @@ const routes: Routes = [
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
   },
   {
-    path: 'recette',
+    path: 'recette-list',
+    loadChildren: () => import('./recette-list/recette/recette.module').then( m => m.RecettePageModule)
+  },
+  {
+    path: 'recette/:id',
     loadChildren: () => import('./recette-list/recette/recette.module').then( m => m.RecettePageModule)
   }
 ];

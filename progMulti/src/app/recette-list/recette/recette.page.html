@@ -1,13 +1,57 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>recette</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/recette-list"></ion-back-button>
+      
+      
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleFavoris()">
+        <ion-icon [name]="recette?.favoris ? 'heart' : 'heart-outline'"></ion-icon>
+      </ion-button>
+      <ion-button (click)="editRecette()">
+        <ion-icon name="create"></ion-icon>
+      </ion-button>
+      <ion-button (click)="deleteRecette()">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">recette</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <h1>{{ recette?.titre }}</h1>
+
+  <div class="recette-image-container">
+    <ion-img [src]="recette?.image_url" [alt]="recette?.titre"></ion-img>
+  </div>
+
+ 
+  <div class="recette-section">
+    <h2>Description</h2>
+    <p>{{ recette?.description }}</p>
+  </div>
+
+  
+  <div class="recette-section">
+    <h2>Ingrédients</h2>
+    <ion-list *ngIf="ingredients !== undefined">
+      <ion-item *ngFor="let ingredient of ingredients">
+        <ion-label>
+          <h3>{{ ingredient.ingredients.nom_ingredient }}</h3>
+          <p>Quantité : {{ ingredient.quantite }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div class="recette-section">
+    <h2>Instructions</h2>
+    <ion-list>
+      <ion-item *ngFor="let instruction of recette?.instructions">
+        - {{ instruction }}
+      </ion-item>
+    </ion-list>
+  </div>
+
 </ion-content>

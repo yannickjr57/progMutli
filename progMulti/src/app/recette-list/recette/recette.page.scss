@@ -1,0 +1,76 @@
+/* Style pour le header */
+  h1{
+    text-align: center;
+  }
+  
+  
+
+  
+  /* Style pour l'image de la recette */
+  .recette-image-container {
+    margin: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  ion-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  /* Style pour les sections de recette */
+  .recette-section {
+    margin: 20px 16px;
+  }
+  
+  .recette-section h2 {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 10px;
+  }
+  
+  .recette-section p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.5;
+  }
+  
+  /* Style pour la liste des ingrédients et instructions */
+  ion-list {
+    padding-left: 16px;
+  }
+  
+  ion-item {
+    --inner-padding-top: 10px;
+    --inner-padding-bottom: 10px;
+  }
+  
+  ion-label h3 {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  ion-label p {
+    font-size: 1rem;
+    color: #666;
+  }
+  
+  ion-item {
+    font-size: 1rem;
+    color: #444;
+  }
+  
+  ion-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: lightblue;
+  }
+  
+  
+ 
+  
+  

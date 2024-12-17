@@ -28,6 +28,27 @@ export class SupabaseService {
     return this.supabase.from('recettes').select('*');
   }
 
+  get Ingredients() {
+    return this.supabase.from('ingredients').select('*');
+  }
+
+  getRecetteById(id: string) {
+    return this.supabase.from('recettes').select('*').eq('id', id);
+  }
+
+  getIngredientsByRecetteId(id: string) {
+    return this.supabase
+    .from('ingredient_recette')
+    .select(`
+      quantite,
+      ingredients (
+        id,
+        nom_ingredient
+      )
+    `)
+    .eq('id_recette', id);
+  }
+
   
 
   downLoadImage(path: string) {
