@@ -154,6 +154,20 @@ export class SupabaseService {
   }
 
   async deleteRecette(id: string) {
+    try{
+      let { data: recette, error, status } = await this.getRecetteById(id);
+      if(recette){
+        const imagePath = recette[0].titre.trim().toLowerCase() + ".jpg";
+        console.log("image path",imagePath);
+        const { data: data3, error: error3 } = await this.supabase.storage
+          .from('images')
+          .remove([imagePath]);
+
+      console.log("data3",data3);
+    }}catch(error){
+    
+      console.log(error);
+    }
     try {
       const { data, error } = await this.supabase
         .from('ingredient_recette')
@@ -163,6 +177,8 @@ export class SupabaseService {
         .from('recettes')
         .delete()
         .eq('id', id);
+        
+
       if (error || error2) throw error || error2;
 
       // Rafraîchir la liste des favoris
@@ -175,13 +191,14 @@ export class SupabaseService {
     }
   }
 
-  async AddRecette(recette: Recette, ingredients : {id:string, quantity:string}[]) {
+  async AddRecette(recette: Recette, ingredients : any[]) {
     const {data, error} = await this.supabase.from('recettes').insert(
       [
         {
+          id : recette.id,
           titre : recette.titre,
           description : recette.description,
-          image_url : recette.titre.toLowerCase()+"_.jpg",
+          image_url : recette.image_url,
           favoris : false,
           instructions : recette.instructions
         }
@@ -190,18 +207,18 @@ export class SupabaseService {
 
     if(error) throw error;
     if(ingredients.length > 0){
-      const recetteId = this.getLastRecetteId()
-      console.log(recetteId)
-      ingredients.forEach(ingredient => {
-        this.supabase.from('ingredient_recette').insert(
+      ingredients.forEach(async ingredient => {
+        console.log("ingredient", ingredient)
+        const {data, error} = await this.supabase.from('ingredient_recette').insert(
           [
             {
-              id_recette : recetteId,
+              id_recette : recette.id,
               id_ingredient : ingredient.id,
               quantite : ingredient.quantity
             }
           ]
         )
+        console.log("data",data, error)
       })
 
       
@@ -209,7 +226,7 @@ export class SupabaseService {
     else{
       console.log("no ingredients")
     }
-  
+  await this.getRecettes()
   }
 
   // Fonction pour créer un loader

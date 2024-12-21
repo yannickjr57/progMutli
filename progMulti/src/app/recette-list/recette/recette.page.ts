@@ -18,22 +18,33 @@ export class RecettePage implements OnInit {
       private readonly supabase: SupabaseService, private route: ActivatedRoute, private alertController: AlertController, private router : Router 
     ) {}
 
-  ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    console.log(id);
-    if(!id){
-      return;
+  async ngOnInit() {
+    const loader = await this.supabase.createLoader();
+    try{
+      const id = this.route.snapshot.paramMap.get('id');
+      console.log(id);
+      if(!id){
+        return;
+      }
+      await this.getRecetteById(id);
+      await this.getIngredientsByRecetteId(id);
     }
-    this.getRecetteById(id);
-    this.getIngredientsByRecetteId(id);
+    catch(error){
+      console.error(error);
+    }
+    finally{
+      loader.dismiss();
+    }
+    
 
   }
 
   async getRecetteById(id:string) {
     try {
       let { data: recette, error, status } = await this.supabase.getRecetteById(id);
-     
+      console.log("recette",recette);
       if (recette) {
+        console.log("recette",recette[0]);
         this.recette = recette[0];
        
       }
