@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SupabaseService } from '../supabase.service';
 
@@ -7,13 +7,16 @@ import { SupabaseService } from '../supabase.service';
   templateUrl: 'tab3.page.html',
   styleUrls: ['tab3.page.scss']
 })
-export class Tab3Page {
+export class Tab3Page implements OnInit {
   favoris$ = this.supabase.favoris$;
   constructor(
         private readonly supabase: SupabaseService, private route: ActivatedRoute,
       ) {}
 
   
-  
+  ngOnInit(): void {
+    this.supabase.getFavoris();
+    
+  }
 
 }

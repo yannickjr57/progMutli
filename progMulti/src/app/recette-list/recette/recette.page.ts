@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AlertController } from '@ionic/angular';import { Ingredient } from 'src/app/models/ingredient.model';
+;
+import { IngredientWithQuantity } from 'src/app/models/ingredientWithQuantity.model';
 import { Recette } from 'src/app/models/recette.model';
 import { SupabaseService } from 'src/app/supabase.service';
 
@@ -9,10 +12,10 @@ import { SupabaseService } from 'src/app/supabase.service';
   styleUrls: ['./recette.page.scss'],
 })
 export class RecettePage implements OnInit {
-  recette : any;
-  ingredients : any[] = [];
+  recette : Recette = new Recette();
+  ingredients : IngredientWithQuantity[] = [];
   constructor(
-      private readonly supabase: SupabaseService, private route: ActivatedRoute,
+      private readonly supabase: SupabaseService, private route: ActivatedRoute, private alertController: AlertController, private router : Router 
     ) {}
 
   ngOnInit() {
@@ -44,9 +47,10 @@ export class RecettePage implements OnInit {
       let { data: ingredients, error, status } = await this.supabase.getIngredientsByRecetteId(id);
      
       if (ingredients) {
-        this.ingredients = ingredients;
+        this.ingredients = ingredients.map((ingredient : any) => new IngredientWithQuantity(ingredient.ingredients, ingredient.quantite));
         
       }
+    
     } catch (error: any) {
       alert(error.message);
     }
@@ -56,7 +60,12 @@ export class RecettePage implements OnInit {
     try {
       this.recette.favoris = !this.recette.favoris;
       await this.supabase.setFavoris(this.recette.id, this.recette.favoris);
-      await this.supabase.createNotice('Recette mise en favoris');
+      if(this.recette.favoris){
+        this.supabase.createNotice("Recette ajoutée aux favoris");
+      }
+      else{
+        this.supabase.createNotice("Recette retirée des favoris");
+      }
     } catch (error: any) {
       alert(error.message);
     }
@@ -66,8 +75,27 @@ export class RecettePage implements OnInit {
 
   }
 
-  deleteRecette(){
+  async deleteRecette(){
+    const alert = await this.alertController.create({
+      header: 'Confirmation',
+      message: 'Etes-vous certain de vouloir supprimer cette recette ?',
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+        },
+        {
+          text: 'Supprimer',
+          handler: () => {
+            this.supabase.deleteRecette(this.recette.id);
+            this.router.navigate(['/recette-list']);
+          },
+        },
+      ],
+    })
 
+    await alert.present();
+    
   }
 
 }

@@ -6,6 +6,9 @@ import {
 } from '@supabase/supabase-js';
 import { environment } from '../environments/environment';
 import { BehaviorSubject } from 'rxjs';
+import { Recette } from './models/recette.model';
+import { Title } from '@angular/platform-browser';
+
 
 @Injectable({
   providedIn: 'root',
@@ -13,8 +16,16 @@ import { BehaviorSubject } from 'rxjs';
 export class SupabaseService {
   private supabase: SupabaseClient;
 
+  private ingredientsSubject = new BehaviorSubject<any[]>([]);
+  ingredients$ = this.ingredientsSubject.asObservable()
+
+  private recettesSubject = new BehaviorSubject<any[]>([]); // Pour gérer l'état des recettes
+  recettes$ = this.recettesSubject.asObservable(); // Observable pour s'abonner aux changements de recettes
+
   private favorisSubject = new BehaviorSubject<any[]>([]); // Pour gérer l'état des favoris
   favoris$ = this.favorisSubject.asObservable(); // Observable pour s'abonner aux changements de favoris
+
+
 
   constructor(private loadingCtrl: LoadingController, private toastCtrl: ToastController) {
     this.supabase = createClient(
@@ -24,13 +35,33 @@ export class SupabaseService {
   }
 
   // Fonction pour obtenir les recettes
-  get Recettes() {
-    return this.supabase.from('recettes').select('*');
+  async getRecettes() {
+    try{
+      const { data, error } = await this.supabase.from('recettes').select('*');
+      if (error) throw error;
+
+      // Mettre à jour le BehaviorSubject avec les nouvelles recettes
+      this.recettesSubject.next(data);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des recettes:', error);
+
+    }
+
   }
 
   // Fonction pour obtenir les ingrédients
-  get Ingredients() {
-    return this.supabase.from('ingredients').select('*');
+  async getIngredients() {
+    try{
+      const { data, error } = await this.supabase
+        .from("ingredients")
+        .select('*')
+      if(error) throw error;
+      this.ingredientsSubject.next(data)
+    }
+    catch(error){
+      console.error("erreur de la récuperation des ingrédients", error)
+    }
+
   }
 
   // Fonction pour obtenir les favoris
@@ -79,6 +110,26 @@ export class SupabaseService {
     return this.supabase.storage.from('images').upload(filePath, file);
   }
 
+  async getLastRecetteId() {
+    try {
+      const { data, error } = await this.supabase
+        .from('recettes')
+        .select('id')
+        .order('id', { ascending: false })
+        .limit(1);
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        return data[0].id;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération de l\'ID de la dernière recette:', error);
+      return null;
+    }
+  }
   // Fonction pour mettre à jour un favori
   async setFavoris(id: string, favoris: boolean) {
     try {
@@ -100,6 +151,65 @@ export class SupabaseService {
   async createNotice(message: string) {
     const toast = await this.toastCtrl.create({ message, duration: 5000 });
     await toast.present();
+  }
+
+  async deleteRecette(id: string) {
+    try {
+      const { data, error } = await this.supabase
+        .from('ingredient_recette')
+        .delete()
+        .eq('id_recette', id);
+      const { data: data2, error: error2 } = await this.supabase
+        .from('recettes')
+        .delete()
+        .eq('id', id);
+      if (error || error2) throw error || error2;
+
+      // Rafraîchir la liste des favoris
+      await this.getFavoris();
+      await this.getRecettes();
+      this.createNotice('Recette supprimée');
+      
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la recette:', error);
+    }
+  }
+
+  async AddRecette(recette: Recette, ingredients : {id:string, quantity:string}[]) {
+    const {data, error} = await this.supabase.from('recettes').insert(
+      [
+        {
+          titre : recette.titre,
+          description : recette.description,
+          image_url : recette.titre.toLowerCase()+"_.jpg",
+          favoris : false,
+          instructions : recette.instructions
+        }
+      ]
+    )
+
+    if(error) throw error;
+    if(ingredients.length > 0){
+      const recetteId = this.getLastRecetteId()
+      console.log(recetteId)
+      ingredients.forEach(ingredient => {
+        this.supabase.from('ingredient_recette').insert(
+          [
+            {
+              id_recette : recetteId,
+              id_ingredient : ingredient.id,
+              quantite : ingredient.quantity
+            }
+          ]
+        )
+      })
+
+      
+    }
+    else{
+      console.log("no ingredients")
+    }
+  
   }
 
   // Fonction pour créer un loader

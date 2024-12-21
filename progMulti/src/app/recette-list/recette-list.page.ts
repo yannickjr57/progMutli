@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SupabaseService } from '../supabase.service';
+import { Observable } from 'rxjs';
+
 @Component({
   selector: 'app-recette-list',
   templateUrl: 'recette-list.page.html',
@@ -7,32 +9,13 @@ import { SupabaseService } from '../supabase.service';
 })
 export class Tab1Page implements OnInit {
 
-  
-
-  recettes :any= [];
-
-  
+  recettes$ = this.supabase.recettes$
 
   constructor(
     private readonly supabase: SupabaseService,
   ) {}
+
   ngOnInit() {
-    this.getRecette();
-    
+    this.supabase.getRecettes();  // Affectation de l'Observable à la variable recettes$
   }
-
-  async getRecette() {
-    try {
-      let { data: recettes, error, status } = await this.supabase.Recettes;
-      console.log(recettes, error, status);
-      if (recettes) {
-        this.recettes = recettes;
-        console.log(this.recettes);
-      }
-    } catch (error: any) {
-      alert(error.message);
-    }
-  }
-
-  
 }

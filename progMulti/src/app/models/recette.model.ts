@@ -2,16 +2,16 @@ export class Recette {
     id: string;
     titre: string;
     image_url: string;
+    favoris: boolean;
     description: string;
-    ingredients: string;
-    instructions: string;
+    instructions: Array<string>;
 
     constructor(){
         this.id = '';
         this.titre = '';
         this.image_url = '';
+        this.favoris = false;
         this.description = '';
-        this.ingredients = '';
-        this.instructions = '';
+        this.instructions = [];
     }
 }
