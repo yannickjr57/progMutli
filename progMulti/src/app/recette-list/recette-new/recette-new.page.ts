@@ -18,8 +18,8 @@ export class RecetteNewPage implements OnInit {
   
   recette : Recette = new Recette();
   selectedIngredients: {
-    isSelected: { [key: string]: boolean }; // Statut sélectionné pour chaque ingrédient
-    quantity: { [key: string]: string };   // Quantité associée pour chaque ingrédient      // Nom de l'ingrédient pour chaque id
+    isSelected: { [key: string]: boolean };
+    quantity: { [key: string]: string };   
   } = {
     isSelected: {},
     quantity: {},
@@ -39,7 +39,6 @@ export class RecetteNewPage implements OnInit {
 
   ngOnInit() {
     this.supabase.getIngredients()
-    console.log(this.ingredientS$)
     this.getLastRecetteId().then(
       (lastRecetteId) => {
         lastRecetteId = lastRecetteId+1
@@ -47,6 +46,19 @@ export class RecetteNewPage implements OnInit {
       }
     )
    
+  }
+
+  ngOnDestroy() {
+    this.recette = new Recette();
+    this.selectedIngredients = {
+      isSelected: {},
+      quantity: {},
+    };
+    this.imageFile = null;
+    this.imagePreview = null;
+    this.errors ="";
+    this.NewInstruction =""
+
   }
 
   async getLastRecetteId() {
@@ -73,22 +85,31 @@ export class RecetteNewPage implements OnInit {
     this.recette.instructions.splice(index, 1);
   }
 
-  addRecette(){
-    this.recette.image_url ="https://uoyasvknlbqbrhuvmvms.supabase.co/storage/v1/object/public/images/"+this.recette.titre.trim().toLowerCase()+"_.jpg"
-    
-    this.checkErrors()
-    if(this.errors != ""){ 
-      this.supabase.createNotice(this.errors);
-      return
+  async addRecette(){
+ 
+    const loader = await this.supabase.createLoader();
+    try{
+      loader.present();
+      this.checkErrors()
+      if(this.errors != ""){ 
+        this.supabase.createNotice(this.errors);
+        return
+      }
+      if(this.imageFile){
+        const date = new Date().getTime().toString();
+        await this.supabase.uploadAvatar(date+"_.jpg", this.imageFile!)
+        this.recette.image_url ="https://uoyasvknlbqbrhuvmvms.supabase.co/storage/v1/object/public/images/"+date+"_.jpg"
+      }
+      await this.supabase.AddRecette(this.recette, this.getIngredientsWithQuantity())
+      await this.supabase.getRecettes();
+      this.supabase.createNotice("Recette ajoutée");
+      this.router.navigate(['/recette-list']);
+      this.ngOnDestroy();
+      
     }
-    if(this.imageFile){
-      this.supabase.uploadAvatar(this.recette.titre.trim().toLowerCase()+"_.jpg", this.imageFile!)
+    finally{
+      await loader.dismiss();
     }
-    console.log("recette",this.recette)
-    this.supabase.AddRecette(this.recette, this.getIngredientsWithQuantity())
-    this.supabase.getRecettes();
-    this.supabase.createNotice("Recette ajoutée");
-    this.router.navigate(['/recette-list']);
   }
 
 
@@ -99,9 +120,9 @@ export class RecetteNewPage implements OnInit {
     this.imageFile = file;
     const reader = new FileReader();
     reader.onload = () => {
-      this.imagePreview = reader.result as string; // URL de l'image
+      this.imagePreview = reader.result as string;
     };
-    reader.readAsDataURL(this.imageFile); // Convertir le fichier en DataURL
+    reader.readAsDataURL(this.imageFile); 
   }
 
   checkErrors(){

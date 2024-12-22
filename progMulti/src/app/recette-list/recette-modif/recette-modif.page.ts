@@ -17,8 +17,8 @@ export class RecetteModifPage implements OnInit {
   ingredients : IngredientWithQuantity[] = [];
   recette : Recette = new Recette();
   selectedIngredients: {
-    isSelected: { [key: string]: boolean }; // Statut sélectionné pour chaque ingrédient
-    quantity: { [key: string]: string };   // Quantité associée pour chaque ingrédient      // Nom de l'ingrédient pour chaque id
+    isSelected: { [key: string]: boolean }; 
+    quantity: { [key: string]: string };  
   } = {
     isSelected: {},
     quantity: {},
@@ -59,7 +59,6 @@ imagePreview: SafeResourceUrl | null = null;
 
   initSelectedIngredients() {
     this.ingredients.forEach((ingredient) => {
-      console.log(ingredient);
       this.selectedIngredients.isSelected[ingredient.ingredient.id] = true;
       this.selectedIngredients.quantity[ingredient.ingredient.id] = ingredient.quantite;
     })
@@ -89,6 +88,7 @@ imagePreview: SafeResourceUrl | null = null;
   }
 
   addInstruction(){
+    if(this.NewInstruction == ""){return}
     this.recette.instructions = [...this.recette.instructions, this.NewInstruction]
     this.NewInstruction = "";
   }
@@ -96,25 +96,28 @@ imagePreview: SafeResourceUrl | null = null;
     this.recette.instructions.splice(index, 1);
   }
 
-  addRecette(){
-    if(this.recette.image_url == null || this.imageFile !== null){
-      
-      this.recette.image_url ="https://uoyasvknlbqbrhuvmvms.supabase.co/storage/v1/object/public/images/"+this.recette.titre.trim().toLowerCase()+"_.jpg"
+  async addRecette(){
+    const loader = await this.supabase.createLoader();
+    try{
+      loader.present();
+      this.checkErrors()
+      if(this.errors != ""){ 
+        this.supabase.createNotice(this.errors);
+        return
+      }
+      if(this.imageFile){
+        const date = new Date().getTime().toString();
+        await this.supabase.uploadAvatar(date+"_.jpg", this.imageFile!)
+        this.recette.image_url ="https://uoyasvknlbqbrhuvmvms.supabase.co/storage/v1/object/public/images/"+date+"_.jpg"
+      }
+      await this.supabase.updateRecette(this.recette, this.getIngredientsWithQuantity())
+      await this.supabase.getRecettes();
+      this.supabase.createNotice("Recette modifiée");
+      this.router.navigate(['/recette-list']);
     }
-    
-    this.checkErrors()
-    if(this.errors != ""){ 
-      this.supabase.createNotice(this.errors);
-      return
+    finally{
+      await loader.dismiss();
     }
-    if(this.imageFile){
-      this.supabase.uploadAvatar(this.recette.titre.trim().toLowerCase()+"_.jpg", this.imageFile!)
-    }
-    console.log("recette",this.recette)
-    this.supabase.updateRecette(this.recette, this.getIngredientsWithQuantity())
-    this.supabase.getRecettes();
-    this.supabase.createNotice("Recette modifiée");
-    this.router.navigate(['/recette-list']);
   }
 
 
@@ -125,9 +128,9 @@ imagePreview: SafeResourceUrl | null = null;
     this.imageFile = file;
     const reader = new FileReader();
     reader.onload = () => {
-      this.imagePreview = reader.result as string; // URL de l'image
+      this.imagePreview = reader.result as string; 
     };
-    reader.readAsDataURL(this.imageFile); // Convertir le fichier en DataURL
+    reader.readAsDataURL(this.imageFile); 
   }
 
   checkErrors(){

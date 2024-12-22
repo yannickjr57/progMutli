@@ -1,14 +1,11 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/ajout"></ion-back-button>
-    </ion-buttons>
     <ion-title>Ajout de recette</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <!-- Titre de la section -->
+  
   <ion-card>
     <ion-card-header>
       <ion-card-title>Nouvelle Recette</ion-card-title>
@@ -16,16 +13,14 @@
     </ion-card-header>
   </ion-card>
 
-  <!-- Formulaire de création de recette -->
   <ion-card>
     <ion-card-content>
-      <!-- Titre -->
+
       <ion-item>
         <ion-label position="floating">Titre</ion-label>
         <ion-input [(ngModel)]="recette.titre" type="text" ></ion-input>
       </ion-item>
 
-      <!-- Image Camera -->
       <ion-item lines="none">
         <ion-label>Image</ion-label>
         <ion-button (click)="handleCamera()" color="primary" fill="outline" slot="end">
@@ -36,7 +31,7 @@
         <img [src]="imagePreview" alt="Aperçu de l'image" />
       </div>
 
-      <!-- Description -->
+
       <ion-item>
         <ion-label position="floating">Description</ion-label>
         <ion-textarea [(ngModel)]="recette.description" ></ion-textarea>
@@ -44,7 +39,6 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Liste des ingrédients -->
   <ion-card>
     <ion-card-header>
       <ion-card-title>Ingrédients</ion-card-title>
@@ -68,7 +62,6 @@
   
   
 
-  <!-- Instructions -->
   <ion-card>
     <ion-card-header>
       <ion-card-title>Instructions</ion-card-title>
@@ -98,7 +91,6 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Bouton Ajouter Recette -->
   <ion-button expand="block" (click)="addRecette()" color="success">
     Ajouter la recette
   </ion-button>

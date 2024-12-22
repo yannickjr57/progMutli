@@ -19,11 +19,11 @@ export class SupabaseService {
   private ingredientsSubject = new BehaviorSubject<any[]>([]);
   ingredients$ = this.ingredientsSubject.asObservable()
 
-  private recettesSubject = new BehaviorSubject<any[]>([]); // Pour gérer l'état des recettes
-  recettes$ = this.recettesSubject.asObservable(); // Observable pour s'abonner aux changements de recettes
+  private recettesSubject = new BehaviorSubject<any[]>([]); 
+  recettes$ = this.recettesSubject.asObservable(); 
 
-  private favorisSubject = new BehaviorSubject<any[]>([]); // Pour gérer l'état des favoris
-  favoris$ = this.favorisSubject.asObservable(); // Observable pour s'abonner aux changements de favoris
+  private favorisSubject = new BehaviorSubject<any[]>([]); 
+  favoris$ = this.favorisSubject.asObservable(); 
 
 
 
@@ -40,7 +40,7 @@ export class SupabaseService {
       const { data, error } = await this.supabase.from('recettes').select('*');
       if (error) throw error;
 
-      // Mettre à jour le BehaviorSubject avec les nouvelles recettes
+     
       this.recettesSubject.next(data);
     } catch (error) {
       console.error('Erreur lors de la récupération des recettes:', error);
@@ -49,7 +49,7 @@ export class SupabaseService {
 
   }
 
-  // Fonction pour obtenir les ingrédients
+
   async getIngredients() {
     try{
       const { data, error } = await this.supabase
@@ -64,7 +64,7 @@ export class SupabaseService {
 
   }
 
-  // Fonction pour obtenir les favoris
+
   async getFavoris() {
     try {
       const { data, error } = await this.supabase
@@ -74,19 +74,18 @@ export class SupabaseService {
 
       if (error) throw error;
 
-      // Mettre à jour le BehaviorSubject avec les nouveaux favoris
+ 
       this.favorisSubject.next(data);
     } catch (error) {
       console.error('Erreur lors de la récupération des favoris:', error);
     }
   }
 
-  // Fonction pour récupérer une recette par ID
   getRecetteById(id: string) {
     return this.supabase.from('recettes').select('*').eq('id', id);
   }
 
-  // Fonction pour obtenir les ingrédients par ID de recette
+
   getIngredientsByRecetteId(id: string) {
     return this.supabase
       .from('ingredient_recette')
@@ -100,7 +99,6 @@ export class SupabaseService {
       .eq('id_recette', id);
   }
 
-  // Fonction pour télécharger une image à partir de Supabase Storage
   downLoadImage(path: string) {
     return this.supabase.storage.from('images').download(path);
   }
@@ -130,7 +128,7 @@ export class SupabaseService {
       return null;
     }
   }
-  // Fonction pour mettre à jour un favori
+  
   async setFavoris(id: string, favoris: boolean) {
     try {
       const { data, error } = await this.supabase
@@ -140,14 +138,14 @@ export class SupabaseService {
 
       if (error) throw error;
 
-      // Mettre à jour la liste des favoris après modification
-      await this.getFavoris(); // Rafraîchir la liste des favoris
+     
+      await this.getFavoris(); 
     } catch (error) {
       console.error('Erreur lors de la mise à jour du favori:', error);
     }
   }
 
-  // Fonction pour créer une notification Toast
+  
   async createNotice(message: string) {
     const toast = await this.toastCtrl.create({ message, duration: 1500 });
     await toast.present();
@@ -158,7 +156,6 @@ export class SupabaseService {
       let { data: recette, error, status } = await this.getRecetteById(id);
       if(recette){
         const imagePath = recette[0].titre.trim().toLowerCase() + ".jpg";
-        console.log("image path",imagePath);
         const { data: data3, error: error3 } = await this.supabase.storage
           .from('images')
           .remove([imagePath]);
@@ -181,7 +178,7 @@ export class SupabaseService {
 
       if (error || error2) throw error || error2;
 
-      // Rafraîchir la liste des favoris
+ 
       await this.getFavoris();
       await this.getRecettes();
       this.createNotice('Recette supprimée');
@@ -208,7 +205,6 @@ export class SupabaseService {
     if(error) throw error;
     if(ingredients.length > 0){
       ingredients.forEach(async ingredient => {
-        console.log("ingredient", ingredient)
         const {data, error} = await this.supabase.from('ingredient_recette').insert(
           [
             {
@@ -246,7 +242,6 @@ export class SupabaseService {
     if(ingredients.length > 0){
       await this.supabase.from('ingredient_recette').delete().eq('id_recette', recette.id);
       ingredients.forEach(async ingredient => {
-        console.log("ingredient", ingredient)
         const {data, error} = await this.supabase.from('ingredient_recette').insert(
           [
             {
@@ -266,7 +261,7 @@ export class SupabaseService {
   }
     
 
-  // Fonction pour créer un loader
+ 
   createLoader() {
     return this.loadingCtrl.create();
   }

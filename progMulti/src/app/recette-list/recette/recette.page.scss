@@ -1,4 +1,4 @@
-/* Style pour le header */
+
   h1{
     text-align: center;
   }
@@ -6,7 +6,7 @@
   
 
   
-  /* Style pour l'image de la recette */
+  
   .recette-image-container {
     margin: 16px;
     border-radius: 8px;
@@ -17,10 +17,11 @@
   ion-img {
     width: 100%;
     height: auto;
+    // max-height: 50vh;
     object-fit: cover;
   }
   
-  /* Style pour les sections de recette */
+  
   .recette-section {
     margin: 20px 16px;
   }
@@ -38,7 +39,7 @@
     line-height: 1.5;
   }
   
-  /* Style pour la liste des ingrédients et instructions */
+  
   ion-list {
     padding-left: 16px;
   }

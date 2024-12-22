@@ -1,14 +1,14 @@
 
 .image-preview {
     display: flex;
-    justify-content: center; /* Centre horizontalement */
-    align-items: center; /* Centre verticalement */
+    justify-content: center; 
+    align-items: center; 
     margin-top: 10px;
     margin-bottom: 10px;
   }
   
   .image-preview img {
-    max-width: 5em; /* Permet à l'image de s'adapter à son conteneur */
+    max-width: 5em; 
     height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -17,9 +17,11 @@
     text-align: center;
     border: 1px solid #1a65eb;
     border-radius: 20px;
+    margin-top: .5em;
+    margin-bottom: .5em;
     padding-left: 8px;
     margin-right: 10px;
-    width: 50%; /* Ajuste la largeur en fonction de l'espace disponible */
+    width: 50%; 
   }
   
   

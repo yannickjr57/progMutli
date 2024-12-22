@@ -21,11 +21,12 @@ export class RecettePage implements OnInit {
   async ngOnInit() {
     const loader = await this.supabase.createLoader();
     try{
+      loader.present();
       const id = this.route.snapshot.paramMap.get('id');
-      console.log(id);
       if(!id){
         return;
       }
+      await this.supabase.getRecettes();
       await this.getRecetteById(id);
       await this.getIngredientsByRecetteId(id);
     }
@@ -42,9 +43,7 @@ export class RecettePage implements OnInit {
   async  getRecetteById(id:string) {
     try {
       let { data: recette, error, status } = await this.supabase.getRecetteById(id);
-      console.log("recette",recette);
       if (recette) {
-        console.log("recette",recette[0]);
         this.recette = recette[0];
        
       }

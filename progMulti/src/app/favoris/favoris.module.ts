@@ -2,18 +2,18 @@ import { IonicModule } from '@ionic/angular';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Tab1Page } from './recette-list.page';
+import { FavorisPage } from './favoris.page';
 
 
-import { Tab1PageRoutingModule } from './recette-list-routing.module';
+import { FavorisPageRoutingModule } from './favoris-routing.module';
 
 @NgModule({
   imports: [
     IonicModule,
     CommonModule,
     FormsModule,
-    Tab1PageRoutingModule
+    FavorisPageRoutingModule
   ],
-  declarations: [Tab1Page]
+  declarations: [FavorisPage]
 })
-export class Tab1PageModule {}
+export class FavorisPageModule {}

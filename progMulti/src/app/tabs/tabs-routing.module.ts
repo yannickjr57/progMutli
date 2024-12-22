@@ -30,7 +30,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: () => import('../tab3/tab3.module').then(m => m.Tab3PageModule)
+            loadChildren: () => import('../favoris/favoris.module').then(m => m.FavorisPageModule)
           }
         ]
       },

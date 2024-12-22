@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/ajout"></ion-back-button>
+      <ion-back-button defaultHref="/recette/{{recette.id}}"></ion-back-button>
     </ion-buttons>
     <ion-title>Modifier la recette</ion-title>
   </ion-toolbar>
@@ -53,7 +53,7 @@
       <ion-card-title>Ingrédients</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-list style="max-height: 15vh; overflow-y: auto;">
+      <ion-list style="max-height: 20vh; overflow-y: auto;">
         <ion-item *ngFor="let ingredient of ingredientS$ | async">
           <ion-checkbox [(ngModel)]="selectedIngredients.isSelected[ingredient.id]" slot="start"></ion-checkbox>
           <ion-input

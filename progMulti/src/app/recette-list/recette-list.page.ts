@@ -16,6 +16,6 @@ export class Tab1Page implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.supabase.getRecettes();  // Affectation de l'Observable à la variable recettes$
+    this.supabase.getRecettes();  
   }
 }

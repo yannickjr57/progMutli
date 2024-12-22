@@ -3,11 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { SupabaseService } from '../supabase.service';
 
 @Component({
-  selector: 'app-tab3',
-  templateUrl: 'tab3.page.html',
-  styleUrls: ['tab3.page.scss']
+  selector: 'app-favoris',
+  templateUrl: 'favoris.page.html',
+  styleUrls: ['favoris.page.scss']
 })
-export class Tab3Page implements OnInit {
+export class FavorisPage implements OnInit {
   favoris$ = this.supabase.favoris$;
   constructor(
         private readonly supabase: SupabaseService, private route: ActivatedRoute,
