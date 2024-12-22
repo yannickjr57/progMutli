@@ -39,7 +39,7 @@ export class RecettePage implements OnInit {
 
   }
 
-  async getRecetteById(id:string) {
+  async  getRecetteById(id:string) {
     try {
       let { data: recette, error, status } = await this.supabase.getRecetteById(id);
       console.log("recette",recette);
@@ -83,7 +83,7 @@ export class RecettePage implements OnInit {
   }
 
   editRecette(){
-
+    this.router.navigate(['/recette-modif', this.recette.id]);
   }
 
   async deleteRecette(){

@@ -5,6 +5,7 @@ import { Recette } from 'src/app/models/recette.model';
 import { SupabaseService } from 'src/app/supabase.service';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { SafeResourceUrl } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-recette-new',
@@ -14,6 +15,7 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 export class RecetteNewPage implements OnInit {
 
   ingredientS$ = this.supabase.ingredients$
+  
   recette : Recette = new Recette();
   selectedIngredients: {
     isSelected: { [key: string]: boolean }; // Statut sélectionné pour chaque ingrédient
@@ -27,13 +29,13 @@ export class RecetteNewPage implements OnInit {
   NewInstruction ="";
 
   imageFile: File | null = null;
-
+  imagePreview: SafeResourceUrl | null = null;
   errors ="";
 
 
  
   
-  constructor(private supabase : SupabaseService) { }
+  constructor(private supabase : SupabaseService, private router : Router) { }
 
   ngOnInit() {
     this.supabase.getIngredients()
@@ -63,6 +65,7 @@ export class RecetteNewPage implements OnInit {
   }
 
   addInstruction(){
+    if(this.NewInstruction == ""){return}
     this.recette.instructions = [...this.recette.instructions, this.NewInstruction]
     this.NewInstruction = "";
   }
@@ -84,6 +87,8 @@ export class RecetteNewPage implements OnInit {
     console.log("recette",this.recette)
     this.supabase.AddRecette(this.recette, this.getIngredientsWithQuantity())
     this.supabase.getRecettes();
+    this.supabase.createNotice("Recette ajoutée");
+    this.router.navigate(['/recette-list']);
   }
 
 
@@ -92,6 +97,11 @@ export class RecetteNewPage implements OnInit {
     const blob = await fetch(photo.dataUrl || '').then((res) => res.blob());
     const file = new File([blob], 'my-file', { type: `image/${photo.format}` });
     this.imageFile = file;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result as string; // URL de l'image
+    };
+    reader.readAsDataURL(this.imageFile); // Convertir le fichier en DataURL
   }
 
   checkErrors(){
@@ -99,6 +109,11 @@ export class RecetteNewPage implements OnInit {
     if(this.recette.instructions.length == 0){
       this.errors = "Veuillez entrer des instructions"
     }
+    const ingredientsWithQuantity = this.getIngredientsWithQuantity();
+    if(ingredientsWithQuantity.length == 0){
+      this.errors = "Veuillez choisir au moins un ingrediente"
+    } 
+    
     if(this.recette.description.length == 0){
       this.errors = "Veuillez entrer une description"
     }

@@ -19,7 +19,7 @@ const routes: Routes = [
     loadChildren: () => import('./recette-list/recette-new/recette-new.module').then( m => m.RecetteNewPageModule)
   },
   {
-    path: 'recette-modif',
+    path: 'recette-modif/:id',
     loadChildren: () => import('./recette-list/recette-modif/recette-modif.module').then( m => m.RecetteModifPageModule)
   }
 

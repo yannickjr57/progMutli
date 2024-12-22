@@ -149,7 +149,7 @@ export class SupabaseService {
 
   // Fonction pour créer une notification Toast
   async createNotice(message: string) {
-    const toast = await this.toastCtrl.create({ message, duration: 5000 });
+    const toast = await this.toastCtrl.create({ message, duration: 1500 });
     await toast.present();
   }
 
@@ -228,6 +228,43 @@ export class SupabaseService {
     }
   await this.getRecettes()
   }
+
+  async updateRecette(recette: Recette, ingredients : any[]) {
+    const {data, error} = await this.supabase.from('recettes').update(
+      {
+        id : recette.id,
+        titre : recette.titre,
+        description : recette.description,
+        image_url : recette.image_url,
+        favoris : recette.favoris,
+        instructions : recette.instructions
+      }
+    ).eq('id', recette.id)
+
+    if(error) throw error;
+
+    if(ingredients.length > 0){
+      await this.supabase.from('ingredient_recette').delete().eq('id_recette', recette.id);
+      ingredients.forEach(async ingredient => {
+        console.log("ingredient", ingredient)
+        const {data, error} = await this.supabase.from('ingredient_recette').insert(
+          [
+            {
+              id_recette : recette.id,
+              id_ingredient : ingredient.id,
+              quantite : ingredient.quantity
+            }
+          ]
+        )
+        console.log("data",data, error)
+      })
+    }
+    else{
+      console.log("no ingredients")
+    }
+    await this.getRecettes()
+  }
+    
 
   // Fonction pour créer un loader
   createLoader() {

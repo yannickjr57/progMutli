@@ -17,11 +17,11 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'ajout',
+        path: 'recette-new',
         children: [
           {
             path: '',
-            loadChildren: () => import('../tab2/tab2.module').then(m => m.Tab2PageModule)
+            loadChildren: () => import('../recette-list/recette-new/recette-new.module').then(m => m.RecetteNewPageModule)
           }
         ]
       },
